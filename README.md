@@ -1,4 +1,5 @@
 # sbs_math
+THIS IS NOT THE README FOR ICS491
 Official repository for "Step-by-Step Mathematics App" Undergraduate Research Project at the University of Hawaii at Manoa
 
 For a color scheme it may be best to stick to two colors (one highlight, one for text). 
