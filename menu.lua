@@ -1,8 +1,3 @@
-local composer = require( "composer" )
-local lm = require("ogt_levelmanager")
-
-local scene = composer.newScene()
-
 -- -----------------------------------------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called
 -- -----------------------------------------------------------------------------------------------------------------
@@ -10,11 +5,16 @@ local scene = composer.newScene()
 -- Local forward references should go here
 
 -- -------------------------------------------------------------------------------
+
+-------------- Variable Intilizations
+local composer = require( "composer" )
+local lm = require("ogt_levelmanager") -- Initilization in order to use OGT Level Manager
+local scene = composer.newScene()
+
 local menuScreens = {}
 local swipeTrans
 local centerObject
 local currCenterObject = 0
-local moved
 local cancelTouch = false
 local textY = centerY
 local leftText = display.newText(  " ", _W*.2, textY, font, 36 )
@@ -22,6 +22,7 @@ leftText:setFillColor(1,1,1)
 local rightText = display.newText(  "SUPPORT US >", _W*.8, textY, font, 36 )
 rightText:setFillColor(1,1,1)
 
+-------------- Cotnrols the movement of the menu screen 
 local function swipe( event, params )
     local body = event.target
     local phase = event.phase
@@ -105,27 +106,23 @@ local function swipe( event, params )
 
 end
 
-local function createSettings(group)
-
-end
-
--- "scene:create()"
+-------------- Part of the Composer
 function scene:create( event )
+    -- Initialize the scene here
+    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
     
     local sceneGroup = self.view
     local topText = display.newText(  "STEP-BY-STEP MATHEMATICS", centerX, _H*.15, font, 72 )
-    local background = display.newImageRect( "images/bg_chalkboard.png",
-            _W, _H )
+    local background = display.newImageRect( "images/bg_chalkboard.png", _W, _H )
     background.x, background.y = centerX, centerY
     sceneGroup:insert(background)
 
-    background:addEventListener("touch", swipe) -- CHANGE TO background
+    background:addEventListener("touch", swipe)
 
     local contNav = display.newGroup()
     sceneGroup:insert(contNav)
     contNav.x,contNav.y = centerX, centerY
-    contNav.main = display.newImageRect( contNav, "images/puppy.png",
-            _W*.4, _W*.4 )--display.newCircle( contNav, 0,0, _W*.4)
+    contNav.main = display.newImageRect( contNav, "images/puppy.png", _W*.4, _W*.4 ) 
     contNav.main.y = -_H*.1
     contNav.text = display.newText( contNav, "Continue", 0, _H*.20, font, 36*2 )
     contNav.text:setFillColor(1,1,1)
@@ -135,13 +132,7 @@ function scene:create( event )
     end
     contNav:addEventListener("tap", listener)
 
---[[
-    local levelSelNav = display.newGroup()
-    levelSelNav.x,levelSelNav.y = centerX + _W, centerY
-    levelSelNav.main = display.newCircle( levelSelNav , 0,0, _W*.4)
-    levelSelNav.main:setFillColor(1,.5,.5,.25)
-    levelSelNav.text = display.newText( levelSelNav , "Level Select", 0, 0, font, 36 )
-    levelSelNav.text:setFillColor(0,0,0)]]
+    -------------- This is where the different level options are created using OGT Level Mangaer
     lm.init(sceneGroup)
 
 
@@ -150,7 +141,6 @@ function scene:create( event )
     supportNav.main = display.newCircle( supportNav , 0,0, _W*.4)
     supportNav.main:setFillColor(1,.5,.5,0)
     supportNav.text = display.newText( supportNav , "THANK YOU", 0,-_H*.25, font, 56 )
-    --supportNav.text:setFillColor(0,0,0)
     supportNav.text1 = display.newText( supportNav , "Project Mentor:", 0, -_H*.2,  font, 36 )
     supportNav.text2 = display.newText( supportNav , "Ravi Narayan", 0, -_H*.15,  font, 36 )
     supportNav.text3 = display.newText( supportNav , "Project Sponsors:", 0, -_H*.05,  font, 36 )
@@ -164,13 +154,10 @@ function scene:create( event )
     settingsNav.main = display.newCircle( settingsNav , 0,0, _W*.4)
     settingsNav.main:setFillColor(0,1,0,0)
     settingsNav.text = display.newText( settingsNav , "Settings Coming Soon", 0, 0, font, 36 )
-    --settingsNav.text:setFillColor(0,0,0)
+
     
     menuScreens[0] = contNav
     menuScreens[0].leftText = " "
-   -- menuScreens[0].rightText = "LEVEL SELECT >"
-    --menuScreens[1] = levelSelNav
-    --menuScreens[1].leftText = "< CONTINUE "
     menuScreens[0].rightText = "SUPPORT US >"
     menuScreens[1] = supportNav
     menuScreens[1].leftText = "< CONTINUE"
@@ -183,14 +170,12 @@ function scene:create( event )
     currCenterObject = 0
 
     sceneGroup:insert(contNav)
-    --sceneGroup:insert(levelSelNav)
     sceneGroup:insert(supportNav)
     sceneGroup:insert(settingsNav)
     sceneGroup:insert(leftText)
     sceneGroup:insert(rightText)
     sceneGroup:insert(topText)
-    -- Initialize the scene here
-    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
+
 end
 
 
