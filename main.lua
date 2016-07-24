@@ -4,11 +4,15 @@
 --
 ---------------------------------------------------------------------------------
 
-local performance = require('objects.performance')
-performance:newPerformanceMeter()
+--local performance = require('objects.performance') -- CAN COMMENT OUT IF NOT TESTING
+--performance:newPerformanceMeter() -- CAN COMMENT OUT IF NOT TESTING
 
 -- hide the status bar
 display.setStatusBar( display.HiddenStatusBar )
+
+---------------------------------------------------------------------------------
+-------------- GLOBAL VARIABLES -------------- 
+---------------------------------------------------------------------------------
 
 _G._W = display.contentWidth
 _G._H = display.contentHeight
@@ -22,8 +26,6 @@ _G.ballR = width*.375
 _G.maxSpeed  = _W
 
 _G.font = "Dyslexie Regular"
---attempting to get font to work
---_G.font = "data\Dyslexie Regular LP129383 (1)"
 
 --Colors    { R = ,   G = ,     B = }
 _G.Red =      { R = 244/255,  G = 060/255,  B = 039/255 }
@@ -47,77 +49,30 @@ _G.secColor = { R =  Blue.R,  G = Blue.G,   B = Blue.B  }
 _G.outlineColor = { highlight = { r= 0, g=0, b=0 }, shadow = { r=0, g=0, b=0 } }
 
 
-
 _G.fontSize = _W*.05
 _G.phi = 1.618033988749894
 
 
 _G.gRadius = { 1.000*ballR, 2.000*ballR, 2.155*ballR, 2.415*ballR, 2.702*ballR, 3.001*ballR, 3.001*ballR, 3.305*ballR, 3.614*ballR, 3.924*ballR, 4.000*ballR, 4.155*ballR}
 
-
-_G.ballCoord = {
-  --1 Ball
-  { 0, 0 },
-  --2 Balls
-  {  - ballR, 0,    ballR, 0 },
-  --3 Balls
-  { 1.155*ballR*math.cos(math.rad(-90)) , 1.155*ballR*math.sin(math.rad(-90)),            1.155*ballR*math.cos(math.rad(30)), 1.155*ballR*math.sin(math.rad(30)),
-  1.155*ballR*math.cos(math.rad(150)), 1.155*ballR*math.sin(math.rad(150)),},
-  --4 Balls
-  { (gRadius[4] - ballR)*math.cos(math.rad(-90)), (gRadius[4] - ballR)*math.sin(math.rad(-90)),     (gRadius[4] - ballR)*math.cos(math.rad(0)), (gRadius[4] - ballR)*math.sin(math.rad(0)),
-  (gRadius[4] - ballR)*math.cos(math.rad(90)), (gRadius[4] - ballR)*math.sin(math.rad(90)),         (gRadius[4] - ballR)*math.cos(math.rad(180)), (gRadius[4] - ballR)*math.sin(math.rad(180))},
-  --5 Balls
-  {  (gRadius[5] - ballR)*math.cos(math.rad(-90)), (gRadius[5] - ballR)*math.sin(math.rad(-90)),    (gRadius[5] - ballR)*math.cos(math.rad(-18)), (gRadius[5] - ballR)*math.sin(math.rad(-18)),
-  (gRadius[5] - ballR)*math.cos(math.rad(54)), (gRadius[5] - ballR)*math.sin(math.rad(54)),         (gRadius[5] - ballR)*math.cos(math.rad(126)), (gRadius[5] - ballR)*math.sin(math.rad(126)),
-  (gRadius[5] - ballR)*math.cos(math.rad(198)), (gRadius[5] - ballR)*math.sin(math.rad(198)) },
-
-  {  (gRadius[6] - ballR)*math.cos(math.rad(-90)), (gRadius[6] - ballR)*math.sin(math.rad(-90)),  (gRadius[6] - ballR)*math.cos(math.rad(-30)), (gRadius[6] - ballR)*math.sin(math.rad(-30)),
-  (gRadius[6] - ballR)*math.cos(math.rad(30)), (gRadius[6] - ballR)*math.sin(math.rad(30)),       (gRadius[6] - ballR)*math.cos(math.rad(90)), (gRadius[6] - ballR)*math.sin(math.rad(90)),
-  (gRadius[6] - ballR)*math.cos(math.rad(150)), (gRadius[6] - ballR)*math.sin(math.rad(150)),     (gRadius[6] - ballR)*math.cos(math.rad(210)), (gRadius[6] - ballR)*math.sin(math.rad(210)) },
-
-  {  (gRadius[7] - ballR)*math.cos(math.rad(-90)), (gRadius[7] - ballR)*math.sin(math.rad(-90)),  (gRadius[7] - ballR)*math.cos(math.rad(-30)), (gRadius[7] - ballR)*math.sin(math.rad(-30)),
-  (gRadius[7] - ballR)*math.cos(math.rad(30)), (gRadius[7] - ballR)*math.sin(math.rad(30)),       (gRadius[7] - ballR)*math.cos(math.rad(90)), (gRadius[7] - ballR)*math.sin(math.rad(90)),
-  (gRadius[7] - ballR)*math.cos(math.rad(150)), (gRadius[7] - ballR)*math.sin(math.rad(150)),     (gRadius[7] - ballR)*math.cos(math.rad(210)), (gRadius[7] - ballR)*math.sin(math.rad(210)),
-  0, 0 },
-
-  {  (gRadius[8] - ballR)*math.cos(math.rad(-90)), (gRadius[8] - ballR)*math.sin(math.rad(-90)),        (gRadius[8] - ballR)*math.cos(math.rad(-38.571)), (gRadius[8] - ballR)*math.sin(math.rad(-38.571)),
-  (gRadius[8] - ballR)*math.cos(math.rad(12.857)), (gRadius[8] - ballR)*math.sin(math.rad(12.857)),     (gRadius[8] - ballR)*math.cos(math.rad(64.286)), (gRadius[8] - ballR)*math.sin(math.rad(64.286)),
-  (gRadius[8] - ballR)*math.cos(math.rad(115.714)), (gRadius[8] - ballR)*math.sin(math.rad(115.714)),     (gRadius[8] - ballR)*math.cos(math.rad(167.143)), (gRadius[8] - ballR)*math.sin(math.rad(167.143)),
-  (gRadius[8] - ballR)*math.cos(math.rad(218.571)), (gRadius[8] - ballR)*math.sin(math.rad(218.571)),     0,0 },
-
-  {  (gRadius[9] - ballR)*math.cos(math.rad(-90)), (gRadius[9] - ballR)*math.sin(math.rad(-90)),      (gRadius[9] - ballR)*math.cos(math.rad(-45)), (gRadius[9] - ballR)*math.sin(math.rad(-45)),
-  (gRadius[9] - ballR)*math.cos(math.rad(0)),  (gRadius[9] - ballR)*math.sin(math.rad(0)),         (gRadius[9] - ballR)*math.cos(math.rad(45)), (gRadius[9] - ballR)*math.sin(math.rad(45)),
-  (gRadius[9] - ballR)*math.cos(math.rad(90)), (gRadius[9] - ballR)*math.sin(math.rad(90)),       (gRadius[9] - ballR)*math.cos(math.rad(135)), (gRadius[9] - ballR)*math.sin(math.rad(135)),
-  (gRadius[9] - ballR)*math.cos(math.rad(180)), (gRadius[9] - ballR)*math.sin(math.rad(180)),       (gRadius[9] - ballR)*math.cos(math.rad(225)), (gRadius[9] - ballR)*math.sin(math.rad(225)),
-  0, 0 },
-
-  { (gRadius[10] - ballR)*math.cos(math.rad(-90)), (gRadius[10] - ballR)*math.sin(math.rad(-90)),          (gRadius[10] - ballR)*math.cos(math.rad(-50)), (gRadius[10] - ballR)*math.sin(math.rad(-50)),
-  (gRadius[10] - ballR)*math.cos(math.rad(-10)), (gRadius[10] - ballR)*math.sin(math.rad(-10)),             (gRadius[10] - ballR)*math.cos(math.rad(30)), (gRadius[10] - ballR)*math.sin(math.rad(30)),
-  (gRadius[10] - ballR)*math.cos(math.rad(70)), (gRadius[10] - ballR)*math.sin(math.rad(70)),           (gRadius[10] - ballR)*math.cos(math.rad(110)), (gRadius[10] - ballR)*math.sin(math.rad(110)),
-  (gRadius[10] - ballR)*math.cos(math.rad(150)), (gRadius[10] - ballR)*math.sin(math.rad(150)),           (gRadius[10] - ballR)*math.cos(math.rad(190)), (gRadius[10] - ballR)*math.sin(math.rad(190)),
-  (gRadius[10] - ballR)*math.cos(math.rad(230)), (gRadius[10] - ballR)*math.sin(math.rad(230)),           0, 0 },
-
-  { (gRadius[11] - ballR)*math.cos(math.rad(-90)), (gRadius[11] - ballR)*math.sin(math.rad(-90)),          (gRadius[11] - ballR)*math.cos(math.rad(-50)), (gRadius[11] - ballR)*math.sin(math.rad(-50)),
-  (gRadius[11] - ballR)*math.cos(math.rad(-10)), (gRadius[11] - ballR)*math.sin(math.rad(-10)),            (gRadius[11] - ballR)*math.cos(math.rad(30)),  (gRadius[11] - ballR)*math.sin(math.rad(30)),
-  (gRadius[11] - ballR)*math.cos(math.rad(70)),  (gRadius[11] - ballR)*math.sin(math.rad(70)),             (gRadius[11] - ballR)*math.cos(math.rad(110)), (gRadius[11] - ballR)*math.sin(math.rad(110)),
-  (gRadius[11] - ballR)*math.cos(math.rad(150)), (gRadius[11] - ballR)*math.sin(math.rad(150)),            (gRadius[11] - ballR)*math.cos(math.rad(190)), (gRadius[11] - ballR)*math.sin(math.rad(190)),
-  (gRadius[11] - ballR)*math.cos(math.rad(230)), (gRadius[11] - ballR)*math.sin(math.rad(230)),           - ballR, 0,
-  ballR, 0 },
-
-  { (gRadius[12] - ballR)*math.cos(math.rad(-90)), (gRadius[12] - ballR)*math.sin(math.rad(-90)),          (gRadius[12] - ballR)*math.cos(math.rad(-50)), (gRadius[12] - ballR)*math.sin(math.rad(-50)),
-  (gRadius[12] - ballR)*math.cos(math.rad(-10)), (gRadius[12] - ballR)*math.sin(math.rad(-10)),            (gRadius[12] - ballR)*math.cos(math.rad(30)),  (gRadius[12] - ballR)*math.sin(math.rad(30)),
-  (gRadius[12] - ballR)*math.cos(math.rad(70)),  (gRadius[12] - ballR)*math.sin(math.rad(70)),             (gRadius[12] - ballR)*math.cos(math.rad(110)), (gRadius[12] - ballR)*math.sin(math.rad(110)),
-  (gRadius[12] - ballR)*math.cos(math.rad(150)), (gRadius[12] - ballR)*math.sin(math.rad(150)),            (gRadius[12] - ballR)*math.cos(math.rad(190)), (gRadius[12] - ballR)*math.sin(math.rad(190)),
-  (gRadius[12] - ballR)*math.cos(math.rad(230)), (gRadius[12] - ballR)*math.sin(math.rad(230)),            1.155*ballR*math.cos(math.rad(-90)) , 1.155*ballR*math.sin(math.rad(-90)),
-  1.155*ballR*math.cos(math.rad(30)), 1.155*ballR*math.sin(math.rad(30)),                                  1.155*ballR*math.cos(math.rad(150)), 1.155*ballR*math.sin(math.rad(150)) }
-
-}
-
 _G.bg = display.newRect(centerX, centerY, _W, _H)
 bg:setFillColor(1,1,1)
 
-transition.callback = transition.to ;
 
+---------------------------------------------------------------------------------
+-------------- GLOBAL FUNCTIONS -------------- 
+---------------------------------------------------------------------------------
+
+-------------- TRANSITIONS OBJECTS BETWEEN COLORS 
+-------------- PARAMS: 
+-------------- obj: the object to change colors
+-------------- colorFrom: the current color of the object
+-------------- colorTo: the color the object will become
+-------------- time: the time in milliseconds
+-------------- delay: the delay in milliseconds
+-------------- ease: https://docs.coronalabs.com/daily/api/library/easing/index.html
+---------------------------------------------------------------------------------
+transition.callback = transition.to ;
 function transition.fromtocolor(obj, colorFrom, colorTo, time, delay, ease)
 
         local _obj =  obj ;
@@ -192,8 +147,15 @@ function transition.fromtocolor(obj, colorFrom, colorTo, time, delay, ease)
 
 end
 
+-------------- MOVES OBJECTS ACCORDING TO MATERIAL DESIGN PRINCIPLES
+-------------- PARAMS: 
+-------------- obj: the object to be moved
+-------------- xt: the target x coord
+-------------- yt: the target y coord
+-------------- time: the time in milliseconds
+-------------- delay: the delay in milliseconds
+---------------------------------------------------------------------------------
 transition.callback = transition.to ;
-
 function transition.matTrans(obj, xt, yt, time, delay )
 
   local delay = delay or 0
@@ -208,11 +170,12 @@ function transition.matTrans(obj, xt, yt, time, delay )
 
   transition.to( obj, { time=250, xScale = 1.1, yScale = 1.1, onComplete=move } )
 
-
-
 end
 
-
+-------------- TAKES IN DECIMAL AND RETURNS STRING VERSION
+-------------- PARAMS: 
+-------------- number: the decimal version to be converted
+---------------------------------------------------------------------------------
 local function convertDecToLat( number )
 
     local text = "zero"
@@ -264,6 +227,12 @@ local function convertDecToLat( number )
 end
 _G.convertDecToLat = convertDecToLat
 
+-------------- TAKES IN DECIMAL AND RETURNS STRING VERSION
+-------------- PARAMS: 
+-------------- w: the width of the grid to be created 
+-------------- h: the height of the grid to be created
+-------------- size: the number of grid spaces
+---------------------------------------------------------------------------------
 local function createGrid(w, h, size)
 	local p = Math.floor(w / size)
 	local q = Math.floor(h / size)
@@ -275,10 +244,17 @@ local function createGrid(w, h, size)
 		end
 	end
 end
+_G.createGrid = createGrid
 
 
+-------------- Composer controls screen transitions necessary to move between different
+-------------- scenes and levels. 
 local composer = require( "composer" )
 composer.recycleOnSceneChange = true
+
+-------------- Moves to menu screen 
+composer.gotoScene( "menu" )
+
 --composer.gotoScene( "lessons.kCount_01" )
 --composer.gotoScene( "lessons.kCount_02" )
 --composer.gotoScene( "lessons.kCount_02_2" )
@@ -296,5 +272,3 @@ composer.recycleOnSceneChange = true
 --composer.gotoScene( "lessons.lesson11" )
 --composer.gotoScene( "lessons.lesson12" )
 --composer.gotoScene( "lessons.lesson13" )
-
-composer.gotoScene( "menu" )
