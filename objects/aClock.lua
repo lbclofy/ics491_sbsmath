@@ -16,7 +16,7 @@ function aClock:new(x,y, time, movable)
 
 	for i = 1,60 do 
 		local line = display.newLine( clock, 0, 0, 0, 16 )
-		line.x, line.y = 160*math.cos(math.rad( i*6) )  , 160*math.sin(math.rad(i*6)) 
+		line.x, line.y = 120*math.cos(math.rad( i*6) )  , 120*math.sin(math.rad(i*6)) 
 		line.strokeWidth = 4
 		line.alpha = .5
 		line.rotation = i*6 + 90
@@ -25,32 +25,22 @@ function aClock:new(x,y, time, movable)
 		end
 	end
 
-	for i = 1,12 do 
-		local line = display.newLine( clock, 0, 0, 0, 16 )
-		line.x, line.y = 80*math.cos(math.rad( i*30) ), 80*math.sin(math.rad(i*30)) 
-		line.strokeWidth = 4
-		line.alpha = .5
-		line.rotation = i*30 + 90
-	end
-
 	clock.controlPad2 = display.newCircle( clock, 0,0, 160 )
 	clock.controlPad2:setFillColor(0,0,0,.01)
 	clock.controlPad2.x, clock.controlPad2.y = 0, 0
 
-
 	clock.controlPad = display.newCircle( clock, 0,0, 80 )
 	clock.controlPad.x, clock.controlPad.y = 0,0 
 	clock.controlPad:setFillColor(0,0,0,.01)
-	--clock.controlPad.alpha = 0.01
 	clock.controlPad:setStrokeColor(0,0,0,.2)
-		clock.controlPad.strokeWidth = 8
+    clock.controlPad.strokeWidth = 8
 
 	clock.shorthand = display.newLine(clock, 0, 0, 0, 0 - 80)
 	clock.shorthand:setStrokeColor(0,0,0)
 	clock.shorthand.strokeWidth = 8
 	clock.shorthand.anchorX = 0
 
-	clock.longhand = display.newLine(clock, 0, 0, 0, 0 - 160)
+	clock.longhand = display.newLine(clock, 0, 0, 0, 0 - 120)
 	clock.longhand:setStrokeColor(0,0,0)
 	clock.longhand.strokeWidth = 8
 	clock.longhand.anchorX = 0
@@ -76,9 +66,6 @@ function aClock:new(x,y, time, movable)
 	if movable == true then
 	clock.controlPad2.touch = padTouched
 	clock.controlPad2:addEventListener("touch", clock.controlPad2)
-	--clock.controlPad:setFillColor(hlColor.R,hlColor.G,hlColor.B,.5)
-	--clock.controlPad2:setFillColor(hlColor.R,hlColor.G,hlColor.B,.25)
-
 	clock.controlPad.touch = padTouched
 	clock.controlPad:addEventListener("touch", clock.controlPad)
 
