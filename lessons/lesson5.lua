@@ -48,6 +48,10 @@ local input
 local numberLine
 local question
 
+local numCorr = 0
+local numWrong = 0
+local answerText
+
 local sceneGroup
 
 local decText
@@ -267,10 +271,14 @@ function check()
         timers[#timers + 1] = timer.performWithDelay( (delayTime + 2000+ (numberOne+numberTwo) * 400), function (event)
             question:setFillColor(0,1,0)
             end)
+        numCorr = numCorr + 1
+        answerText.text = numCorr .. " / " .. (numCorr + numWrong)
     else
         timers[#timers + 1] = timer.performWithDelay( (delayTime + 2000+ (numberOne+numberTwo) * 400), function (event)
             question:setFillColor(1,0,0)
             end)
+        numWrong = numWrong + 1
+        answerText.text = numCorr .. " / " .. (numCorr + numWrong)
     end
 
 	timers[#timers + 1] = timer.performWithDelay( (delayTime + 3000+ (numberOne+numberTwo) * 400), function (event) reset() end)
@@ -340,10 +348,15 @@ function scene:create( event )
     sceneGroup:insert( background )
 
 
-        displayText = display.newText("", _W * .5, _H * .125, font, _W*.1)
-                displayText:setFillColor( 0, 0, .5 )
- --   physics.setGravity(0,0)
+    displayText = display.newText("", _W * .5, _H * .125, font, _W*.1)
+        displayText:setFillColor( 0, 0, .5 )
+
     sceneGroup:insert(displayText)
+
+    answerText = display.newText("YARGISBLARTF", _W * .75, _H * .1, font, _W*.02)
+        displayText:setFillColor( 0, 0, .5 )
+
+    sceneGroup:insert(answerText)
 
 
     local menu = display.newImageRect( "images/menu.png",
