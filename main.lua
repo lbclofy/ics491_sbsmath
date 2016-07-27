@@ -55,8 +55,8 @@ _G.phi = 1.618033988749894
 
 _G.gRadius = { 1.000*ballR, 2.000*ballR, 2.155*ballR, 2.415*ballR, 2.702*ballR, 3.001*ballR, 3.001*ballR, 3.305*ballR, 3.614*ballR, 3.924*ballR, 4.000*ballR, 4.155*ballR}
 
-_G.bg = display.newRect(centerX, centerY, _W, _H)
-bg:setFillColor(1,1,1)
+--_G.bg = display.newRect(centerX, centerY, _W, _H)
+--bg:setFillColor(1,1,1)
 
 
 ---------------------------------------------------------------------------------
@@ -253,7 +253,7 @@ local composer = require( "composer" )
 composer.recycleOnSceneChange = true
 
 -------------- Moves to menu screen 
-composer.gotoScene( "menu" )
+composer.gotoScene( "loginPage" )
 
 --composer.gotoScene( "lessons.kCount_01" )
 --composer.gotoScene( "lessons.kCount_02" )
