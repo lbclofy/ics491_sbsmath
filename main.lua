@@ -26,6 +26,7 @@ _G.ballR = width*.375
 _G.maxSpeed  = _W
 
 _G.font = "Dyslexie Regular"
+_G.fontText = native.newFont( "Dyslexie Regular" , _H*.06)
 
 --Colors    { R = ,   G = ,     B = }
 _G.Red =      { R = 244/255,  G = 060/255,  B = 039/255 }
@@ -55,8 +56,8 @@ _G.phi = 1.618033988749894
 
 _G.gRadius = { 1.000*ballR, 2.000*ballR, 2.155*ballR, 2.415*ballR, 2.702*ballR, 3.001*ballR, 3.001*ballR, 3.305*ballR, 3.614*ballR, 3.924*ballR, 4.000*ballR, 4.155*ballR}
 
---_G.bg = display.newRect(centerX, centerY, _W, _H)
---bg:setFillColor(1,1,1)
+_G.bg = display.newRect(centerX, centerY, _W, _H)
+bg:setFillColor( 34/255, 31/255, 31/255)
 
 
 ---------------------------------------------------------------------------------

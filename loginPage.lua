@@ -55,13 +55,11 @@ local function file_exists(name)
    if f~=nil then io.close(f) return true else return false end
 end
  
-
-if file_exists(path) == false then
-
-
 local users = [[CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username, password);]]
 print(users)
 db:exec( users )
+
+if file_exists(path) == false then
 
 local tablefill =[[INSERT INTO users VALUES (NULL, ']]..'joey'..[[',']]..'password'..[['); ]]
 db:exec( tablefill )
@@ -75,13 +73,13 @@ end
 print( "version " .. sqlite3.version() )
  
 --print all the table contents
---[[
+
 for row in db:nrows("SELECT * FROM users") do
-  local text = row.username 
-  local t = display.newText(text, 20, 120 + (20 * row.id), native.systemFont, 16)
+  local text = row.username .. " : " ..  row.password
+  local t = display.newText(text, 800, 120 + (20 * row.id), native.systemFont, 16)
   t:setFillColor(1,0,1)
 end
- ]]
+
 --setup the system listener to catch applicationExit
 Runtime:addEventListener( "system", onSystemEvent )
 
@@ -99,11 +97,22 @@ function scene:create( event )
 
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
-    local nameField = native.newTextField( 150, 150, 180, 30 )
+    local nameField = native.newTextField( centerX, _H*.40, _W*.5, _H*.1 )
+    nameField.font = fontText
     sceneGroup:insert( nameField )
-    local passwordField = native.newTextField( 600, 150, 180, 30 )
+    local passwordField = native.newTextField( centerX, _H*.65,  _W*.5, _H*.1 )
+    passwordField.font = fontText
     passwordField.isSecure = true
     sceneGroup:insert( passwordField )
+
+
+    local headlineText  = display.newText( "Welcome!", centerX, _H*.15, font, _W*.05 )
+    local errorText  = display.newText( "", centerX, _H*.9, font, _W*.04 )
+    local userText  = display.newText( "User Name", centerX, _H*.3, font, _W*.04 )
+    local passText  = display.newText( "Password", centerX, _H*.55, font, _W*.04 )
+    sceneGroup:insert( headlineText )
+    sceneGroup:insert( userText )
+    sceneGroup:insert( passText )
 
     local function textListener( event )
 
@@ -115,6 +124,13 @@ function scene:create( event )
             print( event.target.text )
 
         elseif ( event.phase == "editing" ) then
+            local txt = event.text            
+            if(string.len(txt)>10)then
+                txt=string.sub(txt, 1, 10)
+                event.text=txt
+                event.target.text = txt
+            end
+
             print( event.newCharacters )
             print( event.oldText )
             print( event.startPosition )
@@ -127,15 +143,18 @@ function scene:create( event )
 
       
 
-    local login = display.newCircle(  0,0, 40 )
-    login:setFillColor(0,0,1)
-    login.x, login.y = 100, 50
+    local login = display.newRoundedRect( _W*.35, _H*.8, _W*.2, _W*.1/phi, _W*.01 )
+    login:setFillColor(137/255,  94/255,  62/255)
     sceneGroup:insert( login )
+    local loginText  = display.newText( "Login", _W*.35, _H*.8, font, _W*.03 )
+    sceneGroup:insert( loginText )
 
-    local register = display.newCircle(  0,0, 40 )
-    register:setFillColor(0,1,0)
-    register.x, register.y = 600, 50
+    local register = display.newRoundedRect( _W*.65, _H*.8, _W*.2, _W*.1/phi, _W*.01 )
+    register:setFillColor(137/255,  94/255,  62/255)
     sceneGroup:insert( register )
+    local registerText  = display.newText( "Register", _W*.65, _H*.8, font, _W*.03 )
+    sceneGroup:insert( registerText )
+
 
     local function loginUser( event )
         for row in db:nrows("SELECT * FROM users") do
@@ -147,6 +166,7 @@ function scene:create( event )
                 do return end
             end
         end
+        errorText.text = "username or password is wrong"
         print("username or password do not match our database")
     end
     login:addEventListener( "tap", loginUser )
@@ -155,10 +175,15 @@ function scene:create( event )
         for row in db:nrows("SELECT * FROM users") do
         local text = row.username 
         local password = row.password
-            if text == defaultField.text then
+            if text == nameField.text then
             print(text .. " : " .. password)
+            errorText.text = "user already exits"
+            do return end
             end
         end
+        local tablefill =[[INSERT INTO users VALUES (NULL, ']].. nameField.text ..[[',']].. passwordField.text ..[['); ]]
+        db:exec( tablefill )
+        composer.gotoScene( "menu" )
     end
     register:addEventListener( "tap", registerUser )
 
