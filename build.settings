@@ -22,6 +22,12 @@ settings =
 		android = { "Icon.png", "Icon-Small-*.png", "Icon*@2x.png", },
 	},
 
+
+   plugins =
+   {
+      ["plugin.openssl"] = { publisherId = "com.coronalabs", },
+   },
+
 	--
 	-- iOS Section
 	--

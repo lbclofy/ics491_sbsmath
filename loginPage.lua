@@ -1,6 +1,8 @@
 local composer = require( "composer" )
+local openssl = require( "plugin.openssl" )
 
 local scene = composer.newScene()
+local cipher = openssl.get_cipher ( "aes-256-cbc" )
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -41,7 +43,7 @@ local scene = composer.newScene()
 require "sqlite3"
 --Open data.db.  If the file doesn't exist it will be created
 local path = system.pathForFile("data.db", system.DocumentsDirectory)
-db = sqlite3.open( path )   
+_G.db = sqlite3.open( path )   
  
 --Handle the applicationExit event to close the db
 local function onSystemEvent( event )
@@ -50,36 +52,45 @@ local function onSystemEvent( event )
         end
 end
 
-local function file_exists(name)
-   local f=io.open(name,"r")
-   if f~=nil then io.close(f) return true else return false end
-end
  
-local users = [[CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username, password);]]
-print(users)
+local users = [[CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username, password, lesson1, lesson2, lesson3, lesson4, lesson5, lesson6, lesson7, lesson8, lesson9, lesson10, lesson11);]]
 db:exec( users )
 
-if file_exists(path) == false then
-
-local tablefill =[[INSERT INTO users VALUES (NULL, ']]..'joey'..[[',']]..'password'..[['); ]]
-db:exec( tablefill )
- 
---Add rows with a auto index in 'id'. You don't need to specify a set of values because we're populating all of them
-
-
+local i = 0 
+for row in db:nrows("SELECT * FROM users") do
+    i = i + 1
 end
- 
+
+if i == 0 then
+    local tablefill =[[INSERT INTO users VALUES (NULL, ']].. 'default' ..[[',']].. 'password' ..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[[',']]..'0'..[['); ]]
+    db:exec( tablefill )
+end
+
+local text = "5" --numCorr .. "/" .. (numCorr + numWrong)
+local textData = cipher:encrypt ( text, "sbs_math_key" )
+local userData = cipher:decrypt ( "jarrod", "sbs_math_key" )
+  local stmt = [[ UPDATE users SET lesson5 = ']] .. textData ..[[' WHERE username = ']] .. userData .. [['; ]]
+   db:exec( stmt )
+
+
+
+
+
 --print the sqlite version to the terminal
 print( "version " .. sqlite3.version() )
  
 --print all the table contents
 
 for row in db:nrows("SELECT * FROM users") do
-  local text = row.username .. " : " ..  row.password
-  local t = display.newText(text, 800, 120 + (20 * row.id), native.systemFont, 16)
-  t:setFillColor(1,0,1)
-end
+  local userData = cipher:decrypt ( row.username, "sbs_math_key" )  
+  local passData = cipher:decrypt ( row.password, "sbs_math_key" )
+  local text =  userData .. " : " .. passData .. " : " ..  row.password .. " 3: " .. cipher:decrypt ( row.lesson3, "sbs_math_key" ) ..
+  " 4: " .. cipher:decrypt ( row.lesson4, "sbs_math_key" ) .. " 5: " .. cipher:decrypt ( row.lesson5, "sbs_math_key" ) .. " 6: " .. cipher:decrypt ( row.lesson6, "sbs_math_key" ) ..
+  " 7: " .. cipher:decrypt ( row.lesson7, "sbs_math_key" ) .. " 8: " .. cipher:decrypt ( row.lesson8, "sbs_math_key" ) .. " 9: " .. cipher:decrypt ( row.lesson6, "sbs_math_key" ) ..
+  " 10: " .. cipher:decrypt ( row.lesson4, "sbs_math_key" ) .. " 11: " .. cipher:decrypt ( row.lesson5, "sbs_math_key" ) 
+  print(text)
 
+end
 --setup the system listener to catch applicationExit
 Runtime:addEventListener( "system", onSystemEvent )
 
@@ -111,6 +122,7 @@ function scene:create( event )
     local userText  = display.newText( "User Name", centerX, _H*.3, font, _W*.04 )
     local passText  = display.newText( "Password", centerX, _H*.55, font, _W*.04 )
     sceneGroup:insert( headlineText )
+    sceneGroup:insert( errorText )
     sceneGroup:insert( userText )
     sceneGroup:insert( passText )
 
@@ -121,7 +133,7 @@ function scene:create( event )
 
         elseif ( event.phase == "ended" or event.phase == "submitted" ) then
             -- Output resulting text from "defaultField"
-            print( event.target.text )
+
 
         elseif ( event.phase == "editing" ) then
             local txt = event.text            
@@ -131,10 +143,6 @@ function scene:create( event )
                 event.target.text = txt
             end
 
-            print( event.newCharacters )
-            print( event.oldText )
-            print( event.startPosition )
-            print( event.text )
         end
     end
 
@@ -155,19 +163,30 @@ function scene:create( event )
     local registerText  = display.newText( "Register", _W*.65, _H*.8, font, _W*.03 )
     sceneGroup:insert( registerText )
 
+    local options =
+    {
+        params = {
+            username = "",
+        }
+    }
+
 
     local function loginUser( event )
         for row in db:nrows("SELECT * FROM users") do
         local text = row.username 
         local password = row.password
-            if text == nameField.text  and password == passwordField.text then
-                print(text .. " : " .. password)
-                composer.gotoScene( "menu" )
+        local userData = cipher:decrypt ( text, "sbs_math_key" )  
+        local passData = cipher:decrypt ( password, "sbs_math_key" )
+            if userData == nameField.text  and passData == passwordField.text then
+                options.params.username = nameField.text
+                currentUser = options.params.username
+                currentID = row.id
+                composer.gotoScene( "menu" , options)
                 do return end
             end
         end
         errorText.text = "username or password is wrong"
-        print("username or password do not match our database")
+
     end
     login:addEventListener( "tap", loginUser )
 
@@ -176,14 +195,30 @@ function scene:create( event )
         local text = row.username 
         local password = row.password
             if text == nameField.text then
-            print(text .. " : " .. password)
             errorText.text = "user already exits"
             do return end
             end
         end
-        local tablefill =[[INSERT INTO users VALUES (NULL, ']].. nameField.text ..[[',']].. passwordField.text ..[['); ]]
+
+        local nameData = cipher:encrypt ( nameField.text, "sbs_math_key" )
+        local passData = cipher:encrypt ( passwordField.text, "sbs_math_key" )
+        local defaultData = cipher:encrypt ( '0/0', "sbs_math_key" )
+
+
+        local tablefill =[[INSERT INTO users VALUES (NULL, ']].. nameData ..[[',']].. passData ..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[[',']]..defaultData..[['); ]]
         db:exec( tablefill )
-        composer.gotoScene( "menu" )
+        options.params.username = nameField.text
+        currentUser = options.params.username
+
+        for row in db:nrows("SELECT * FROM users") do
+        local text = row.username 
+        local userData = cipher:decrypt ( text, "sbs_math_key" )  
+            if userData == nameField.text then
+                currentID = row.id
+                composer.gotoScene( "menu" , options)
+            end
+        end
+        
     end
     register:addEventListener( "tap", registerUser )
 

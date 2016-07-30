@@ -24,6 +24,8 @@ _G.width = 100*scale
 _G.ballR = width*.375
 
 _G.maxSpeed  = _W
+_G.currentUser = " "
+_G.currentID = 1
 
 _G.font = "Dyslexie Regular"
 _G.fontText = native.newFont( "Dyslexie Regular" , _H*.06)

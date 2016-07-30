@@ -22,6 +22,8 @@ leftText:setFillColor(1,1,1)
 local rightText = display.newText(  "SUPPORT US >", _W*.8, textY, font, 36 )
 rightText:setFillColor(1,1,1)
 
+
+
 -------------- Cotnrols the movement of the menu screen 
 local function swipe( event, params )
     local body = event.target
