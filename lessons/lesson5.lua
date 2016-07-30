@@ -274,21 +274,17 @@ function check()
             question:setFillColor(0,1,0)
             end)
         numCorr = numCorr + 1
-        answerText.text = numCorr .. "/" .. (numCorr + numWrong)
-        local textData = cipher:encrypt ( answerText.text, "sbs_math_key" )
-        local userUpdate = [[ UPDATE users SET lesson5 = ']] .. textData ..[[' WHERE id = ']] .. currentID .. [['; ]]
-        db:exec( userUpdate )
-
     else
         timers[#timers + 1] = timer.performWithDelay( (delayTime + 2000+ (numberOne+numberTwo) * 400), function (event)
             question:setFillColor(1,0,0)
             end)
         numWrong = numWrong + 1
-        answerText.text = numCorr .. "/" .. (numCorr + numWrong)
-        local textData = cipher:encrypt ( answerText.text, "sbs_math_key" )
-        local userUpdate = [[ UPDATE users SET lesson5 = ']] .. textData ..[[' WHERE id = ']] .. currentID .. [['; ]]
-        db:exec( userUpdate )
     end
+    
+    answerText.text = numCorr .. "/" .. (numCorr + numWrong)
+    local textData = cipher:encrypt ( answerText.text, "sbs_math_key" )
+    local userUpdate = [[ UPDATE users SET lesson5 = ']] .. textData ..[[' WHERE id = ']] .. currentID .. [['; ]]
+    db:exec( userUpdate )
 
 	timers[#timers + 1] = timer.performWithDelay( (delayTime + 3000+ (numberOne+numberTwo) * 400), function (event) reset() end)
 
@@ -375,8 +371,6 @@ function scene:create( event )
     sceneGroup:insert(displayText)
 
     answerText = display.newText(" ", _W * .75, _H * .1, font, _W*.02)
-        displayText:setFillColor( 0, 0, .5 )
-
     sceneGroup:insert(answerText)
 
 

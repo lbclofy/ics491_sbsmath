@@ -9,12 +9,18 @@ local bucket = require( "objects.bucket")
 local numInput = require( "objects.tripleinput")
 local widget = require "widget"
 local physics = require "physics"
+local openssl = require( "plugin.openssl" )
+local cipher = openssl.get_cipher ( "aes-256-cbc" )
 physics.start()
 --physics.setDrawMode( "hybrid" )
 physics.setTimeStep( 1/10 )
 physics.setGravity( 0, 9.8 )
 
 local scene = composer.newScene()
+
+local numCorr = 0
+local numWrong = 0
+local answerText
 
 local hasCollidedCircle
 
@@ -263,11 +269,17 @@ function check()
         timers[#timers + 1] = timer.performWithDelay( (delayTime + 2000+ (numberOne+numberTwo)/10 * checkStep), function (event)
             question:setFillColor(0,1,0)
             end)
+         numCorr = numCorr + 1
     else
         timers[#timers + 1] = timer.performWithDelay( (delayTime + 2000+ (numberOne+numberTwo)/10 * checkStep), function (event)
             question:setFillColor(1,0,0)
             end)
+         numWrong = numWrong + 1
     end
+    answerText.text = numCorr .. "/" .. (numCorr + numWrong)
+    local textData = cipher:encrypt ( answerText.text, "sbs_math_key" )
+    local userUpdate = [[ UPDATE users SET lesson6 = ']] .. textData ..[[' WHERE id = ']] .. currentID .. [['; ]]
+    db:exec( userUpdate )
 
 	timers[#timers + 1] = timer.performWithDelay( (delayTime + 3000+ (numberOne+numberTwo)/10 * checkStep), function (event) reset() end)
 
@@ -325,6 +337,17 @@ function scene:create( event )
 
     sceneGroup = self.view
 
+    for row in db:nrows("SELECT * FROM users") do
+        local userData = cipher:decrypt ( row.username, "sbs_math_key" )  
+        local lessonData = cipher:decrypt ( row.lesson6, "sbs_math_key" )  
+            if userData == currentUser  then
+                print("VALID USER: " .. userData .. " : " .. lessonData )
+                local split = string.find(lessonData, "/")
+                numCorr =  tonumber( lessonData:sub( 1 , split-1 ) )
+                numWrong =  tonumber( lessonData:sub( split+1 ) ) - numCorr
+            end
+    end
+
     count = math.random(1,max)
     matchCount = count
 
@@ -334,6 +357,9 @@ function scene:create( event )
     background.anchorY = 0
     background.x, background.y = 0, 0
     sceneGroup:insert( background )
+
+    answerText = display.newText(" ", _W * .75, _H * .1, font, _W*.02)
+    sceneGroup:insert(answerText)
 
 
         displayText = display.newText("", _W * .5, _H * .125, font, _W*.1)

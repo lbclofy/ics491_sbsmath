@@ -3,9 +3,15 @@ local clockA = require("objects.aclock")
 local clockD = require("objects.dclock")
 local physics = require("physics")
 local widget = require("widget")
+local openssl = require( "plugin.openssl" )
+local cipher = openssl.get_cipher ( "aes-256-cbc" )
 
 physics.start()
 --physics.setDrawMode("hybrid")
+
+local numCorr = 0
+local numWrong = 0
+local answerText
 
 local scene = composer.newScene()
 
@@ -37,16 +43,38 @@ local function check()
         text.text = ""
         answerText:setFillColor( Green.R, Green.G, Green.B )
         timer.performWithDelay( 1500, reset )
+         numCorr = numCorr + 1
     else 
         answerText.text = "Try Again!"
         answerText:setFillColor( Red.R, Red.G, Red.B )
+        numWrong = numWrong + 1
     end
+
+    answerText.text = numCorr .. "/" .. (numCorr + numWrong)
+    local textData = cipher:encrypt ( answerText.text, "sbs_math_key" )
+    local userUpdate = [[ UPDATE users SET lesson11 = ']] .. textData ..[[' WHERE id = ']] .. currentID .. [['; ]]
+    db:exec( userUpdate )
 
 end
 
 function scene:create( event )
 
 	local sceneGroup = self.view
+
+      for row in db:nrows("SELECT * FROM users") do
+        local userData = cipher:decrypt ( row.username, "sbs_math_key" )  
+        local lessonData = cipher:decrypt ( row.lesson11, "sbs_math_key" )  
+            if userData == currentUser  then
+                print("VALID USER: " .. userData .. " : " .. lessonData )
+                local split = string.find(lessonData, "/")
+                numCorr =  tonumber( lessonData:sub( 1 , split-1 ) )
+                numWrong =  tonumber( lessonData:sub( split+1 ) ) - numCorr
+            end
+    end
+
+
+
+
     local background = display.newImageRect( sceneGroup,"images/bg_blue_zig.png",
             display.contentWidth, display.contentHeight )
     background.x, background.y = centerX, centerY
@@ -57,6 +85,9 @@ function scene:create( event )
     analog.setTime( timeString  )
     sceneGroup:insert( analog )
     sceneGroup:insert( digital )
+
+        answerText = display.newText(" ", _W * .75, _H * .1, font, _W*.02)
+    sceneGroup:insert(answerText)
 
 
     text = display.newText("What Time Is It?", centerX, _H*.25, font, fontSize)

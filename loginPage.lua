@@ -86,8 +86,8 @@ for row in db:nrows("SELECT * FROM users") do
   local passData = cipher:decrypt ( row.password, "sbs_math_key" )
   local text =  userData .. " : " .. passData .. " : " ..  row.password .. " 3: " .. cipher:decrypt ( row.lesson3, "sbs_math_key" ) ..
   " 4: " .. cipher:decrypt ( row.lesson4, "sbs_math_key" ) .. " 5: " .. cipher:decrypt ( row.lesson5, "sbs_math_key" ) .. " 6: " .. cipher:decrypt ( row.lesson6, "sbs_math_key" ) ..
-  " 7: " .. cipher:decrypt ( row.lesson7, "sbs_math_key" ) .. " 8: " .. cipher:decrypt ( row.lesson8, "sbs_math_key" ) .. " 9: " .. cipher:decrypt ( row.lesson6, "sbs_math_key" ) ..
-  " 10: " .. cipher:decrypt ( row.lesson4, "sbs_math_key" ) .. " 11: " .. cipher:decrypt ( row.lesson5, "sbs_math_key" ) 
+  " 7: " .. cipher:decrypt ( row.lesson7, "sbs_math_key" ) .. " 8: " .. cipher:decrypt ( row.lesson8, "sbs_math_key" ) .. " 9: " .. cipher:decrypt ( row.lesson9, "sbs_math_key" ) ..
+  " 10: " .. cipher:decrypt ( row.lesson10, "sbs_math_key" ) .. " 11: " .. cipher:decrypt ( row.lesson11, "sbs_math_key" ) 
   print(text)
 
 end

@@ -5,8 +5,14 @@ local animalball = require("objects.animalball")
 local compball = require("objects.compball")
 local compball = require("objects.compballput")
 local physics = require "physics"
+local openssl = require( "plugin.openssl" )
+local cipher = openssl.get_cipher ( "aes-256-cbc" )
 physics.start()
 --physics.setDrawMode( "hybrid" )
+
+local numCorr = 0
+local numWrong = 0
+local answerText
 
 local hasCollidedCircle
 
@@ -72,7 +78,16 @@ function check()
 	local answer = false
 	if correct == put.operator then
 		answer = true
+		numCorr = numCorr + 1
+		
+    else
+    	numWrong = numWrong + 1
 	end
+
+	answerText.text = numCorr .. "/" .. (numCorr + numWrong)
+    local textData = cipher:encrypt ( answerText.text, "sbs_math_key" )
+    local userUpdate = [[ UPDATE users SET lesson3 = ']] .. textData ..[[' WHERE id = ']] .. currentID .. [['; ]]
+    db:exec( userUpdate )
 
 	for i=1, count1 do
 		local distance = math.pow( (math.pow( matchBalls1[i].x - numLine1.x, 2 ) + math.pow( matchBalls1[i].y, 2 )), .5  )
@@ -344,6 +359,19 @@ function scene:create( event )
  	sceneGroup = self.view
 	physics.setGravity(0,0)
 
+	for row in db:nrows("SELECT * FROM users") do
+        local userData = cipher:decrypt ( row.username, "sbs_math_key" )  
+        local lessonData = cipher:decrypt ( row.lesson3, "sbs_math_key" )  
+            if userData == currentUser  then
+                print("VALID USER: " .. userData .. " : " .. lessonData )
+                local split = string.find(lessonData, "/")
+                numCorr =  tonumber( lessonData:sub( 1 , split-1 ) )
+                numWrong =  tonumber( lessonData:sub( split+1 ) ) - numCorr
+            end
+    end
+
+
+
 
     local background = display.newImageRect( "images/bg_blue_zig.png",
             display.contentWidth, display.contentHeight )
@@ -362,6 +390,10 @@ function scene:create( event )
     end
     menu:addEventListener( "tap", listener )
     sceneGroup:insert( menu )
+
+    	  answerText = display.newText(" ", _W * .75, _H * .1, font, _W*.02)
+
+    sceneGroup:insert(answerText)
 
 	numLine1 = numLine:new(0, 10, _H*.9, 90, 1, fontSize )
 	numLine1.anchorX, numLine1.anchorY = 0.5, 0.5
