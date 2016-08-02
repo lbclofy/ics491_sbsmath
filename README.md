@@ -1,23 +1,22 @@
 
 #sbsmath
-This is the README for the ICS 491 'Step-by-Step Mathematics' project.
-
+This is the README for the ICS 491 'Step-by-Step Mathematics' project.  
 The project has now reached its final form, that of a secure learning application.
 
-Contributions:
-Basic program (non-security functions):
+Contributions:  
+Basic program (non-security functions):  
 Jarrod Lofy & Team from another class
 
-Implementation of Security functions (login, user account):
-Jarrod Lofy (lead)
+Implementation of Security functions (login, user account):  
+Jarrod Lofy (lead)  
 Alexandra Minc-Flacco (major editing)
 
-Report Writing:
-Spencer Luther (lead)
+Report Writing:  
+Spencer Luther (lead)  
 Alexandra Minc-Flacco (editing)
 
-Security Analysis:
-Spencer Luther (testing, unsafe function review)
+Security Analysis:  
+Spencer Luther (testing, unsafe function review)  
 Alexandra Minc-Flacco (testing)
 
 Old Info:
