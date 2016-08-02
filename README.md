@@ -1,5 +1,26 @@
-# sbs_math
-THIS IS NOT THE README FOR ICS491
+
+#sbsmath
+This is the README for the ICS 491 'Step-by-Step Mathematics' project.
+
+The project has now reached its final form, that of a secure learning application.
+
+Contributions:
+Basic program (non-security functions):
+Jarrod Lofy & Team from another class
+
+Implementation of Security functions (login, user account):
+Jarrod Lofy (lead)
+Alexandra Minc-Flacco (major editing)
+
+Report Writing:
+Spencer Luther (lead)
+Alexandra Minc-Flacco (editing)
+
+Security Analysis:
+Spencer Luther (testing, unsafe function review)
+Alexandra Minc-Flacco (testing)
+
+Old Info:
 Official repository for "Step-by-Step Mathematics App" Undergraduate Research Project at the University of Hawaii at Manoa
 
 For a color scheme it may be best to stick to two colors (one highlight, one for text). 
