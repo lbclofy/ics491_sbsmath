@@ -1,11 +1,21 @@
 #sbsmath
 This is the README for the ICS491 portion of the project
 
-Project is currently working simply as a 'learning' application; no security features have been implemented.
+The project has now reached its final form, that of a secure learning application.
 
-Contributions so far:
-Jarrod Lofy & Team from another class: Built basic program
+Contributions:
+Basic program (non-security functions):
+Jarrod Lofy & Team from another class
 
-To Do: 
--Jarrod & Alexandra (primary coders): implement login and high scores
--Spencer Luther (primary analyst): review code for unsafe/deprecated functions and provide alternatives
+Implementation of Security functions (login, user account):
+Jarrod Lofy (lead)
+Alexandra Minc-Flacco (major editing)
+
+Report Writing:
+Spencer Luther (lead)
+Alexandra Minc-Flacco (editing)
+
+Security Analysis:
+Spencer Luther (testing, unsafe function review)
+Alexandra Minc-Flacco (testing)
+
