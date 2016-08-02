@@ -9,7 +9,7 @@ Jarrod Lofy & Team from another class
 
 Implementation of Security functions (login, user account):
 Jarrod Lofy (lead)
-Alexandra Minc-Flacco (major editing)
+Alexandra Minc-Flacco (editing, comments)
 
 Report Writing:
 Spencer Luther (lead)
